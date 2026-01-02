@@ -8,15 +8,15 @@ import { cn } from '@/lib/utils';
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  
+
   const navItems = [
     { path: '/calculate', label: 'Calculate', icon: Calculator },
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/assistant', label: 'AI Assistant', icon: MessageCircle },
   ];
-  
+
   const isActive = (path: string) => location.pathname === path;
-  
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
       <div className="container mx-auto px-4">
@@ -24,15 +24,13 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <motion.div
-              className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <span className="text-primary-foreground font-bold text-lg">ز</span>
+              <img src="/logo.png.png" alt="Zakatify" className="h-10 w-auto" />
             </motion.div>
-            <span className="text-xl font-bold text-foreground">ZAKAT</span>
           </Link>
-          
+
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-2">
             {navItems.map((item) => (
@@ -51,7 +49,7 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          
+
           {/* CTA Button */}
           <div className="hidden md:block">
             <Link to="/calculate">
@@ -60,7 +58,7 @@ export function Header() {
               </Button>
             </Link>
           </div>
-          
+
           {/* Mobile Menu Toggle */}
           <button
             className="md:hidden p-2 rounded-lg hover:bg-accent"
@@ -70,7 +68,7 @@ export function Header() {
           </button>
         </div>
       </div>
-      
+
       {/* Mobile Menu */}
       {isMenuOpen && (
         <motion.div

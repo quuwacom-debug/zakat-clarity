@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Banknote, 
-  Building2, 
-  Coins, 
-  TrendingUp, 
-  Package, 
+import {
+  Banknote,
+  Building2,
+  Coins,
+  TrendingUp,
+  Package,
   Wallet,
   CreditCard,
   ArrowRight,
@@ -18,11 +18,11 @@ import {
   Info,
   RefreshCw
 } from 'lucide-react';
-import { 
-  ZakatAssets, 
-  Currency, 
-  CURRENCIES, 
-  getDefaultAssets, 
+import {
+  ZakatAssets,
+  Currency,
+  CURRENCIES,
+  getDefaultAssets,
   calculateZakat,
   formatCurrency,
   NISAB,
@@ -32,68 +32,68 @@ import { useMetalPrices } from '@/hooks/useMetalPrices';
 import { cn } from '@/lib/utils';
 
 const assetCategories = [
-  { 
-    key: 'cash', 
-    label: 'Cash on Hand', 
-    icon: Banknote, 
+  {
+    key: 'cash',
+    label: 'Cash on Hand',
+    icon: Banknote,
     description: 'Physical cash and currency you possess',
     placeholder: 'Enter amount'
   },
-  { 
-    key: 'bankBalance', 
-    label: 'Bank Balance', 
-    icon: Building2, 
+  {
+    key: 'bankBalance',
+    label: 'Bank Balance',
+    icon: Building2,
     description: 'Savings, checking, and fixed deposits',
     placeholder: 'Enter amount'
   },
-  { 
-    key: 'goldGrams', 
-    label: 'Gold (grams)', 
-    icon: Coins, 
+  {
+    key: 'goldGrams',
+    label: 'Gold (grams)',
+    icon: Coins,
     description: 'Gold jewelry, coins, and bars',
     placeholder: 'Enter grams',
     isWeight: true
   },
-  { 
-    key: 'silverGrams', 
-    label: 'Silver (grams)', 
-    icon: Coins, 
+  {
+    key: 'silverGrams',
+    label: 'Silver (grams)',
+    icon: Coins,
     description: 'Silver jewelry, coins, and bars',
     placeholder: 'Enter grams',
     isWeight: true
   },
-  { 
-    key: 'investments', 
-    label: 'Investments', 
-    icon: TrendingUp, 
+  {
+    key: 'investments',
+    label: 'Investments',
+    icon: TrendingUp,
     description: 'Stocks, mutual funds, bonds',
     placeholder: 'Enter value'
   },
-  { 
-    key: 'shares', 
-    label: 'Business Shares', 
-    icon: Package, 
+  {
+    key: 'shares',
+    label: 'Business Shares',
+    icon: Package,
     description: 'Partnership shares and equity',
     placeholder: 'Enter value'
   },
-  { 
-    key: 'businessAssets', 
-    label: 'Business Assets', 
-    icon: Building2, 
+  {
+    key: 'businessAssets',
+    label: 'Business Assets',
+    icon: Building2,
     description: 'Inventory, receivables, raw materials',
     placeholder: 'Enter value'
   },
-  { 
-    key: 'otherWealth', 
-    label: 'Other Wealth', 
-    icon: Wallet, 
+  {
+    key: 'otherWealth',
+    label: 'Other Wealth',
+    icon: Wallet,
     description: 'Any other zakatable assets',
     placeholder: 'Enter amount'
   },
-  { 
-    key: 'debts', 
-    label: 'Debts to Deduct', 
-    icon: CreditCard, 
+  {
+    key: 'debts',
+    label: 'Debts to Deduct',
+    icon: CreditCard,
     description: 'Outstanding loans and liabilities',
     placeholder: 'Enter amount',
     isDeduction: true
@@ -105,28 +105,87 @@ export default function CalculatePage() {
   const [assets, setAssets] = useState<ZakatAssets>(getDefaultAssets());
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>(CURRENCIES[0]);
   const [calculation, setCalculation] = useState<ZakatCalculation | null>(null);
-  
+
   const { prices, loading: pricesLoading } = useMetalPrices(selectedCurrency.code);
-  
+
+  // Calculate wealth distribution for the ring chart
+  const wealthSegments = useMemo(() => {
+    if (!calculation) return [];
+
+    const cashValue = (assets.cash || 0) + (assets.bankBalance || 0);
+    const goldValue = (assets.goldGrams || 0) * prices.gold;
+    const silverValue = (assets.silverGrams || 0) * prices.silver;
+    const investValue = (assets.investments || 0) + (assets.shares || 0);
+    const businessValue = (assets.businessAssets || 0);
+    const otherValue = (assets.otherWealth || 0);
+
+    // Total raw wealth (before debts)
+    const totalRawWealth = cashValue + goldValue + silverValue + investValue + businessValue + otherValue;
+
+    if (totalRawWealth === 0) return [];
+
+    const segments = [
+      { label: 'Cash & Bank', value: cashValue, color: 'hsl(160, 84%, 25%)' },
+      { label: 'Gold', value: goldValue, color: 'hsl(45, 80%, 50%)' },
+      { label: 'Silver', value: silverValue, color: 'hsl(210, 10%, 70%)' },
+      { label: 'Investments', value: investValue, color: 'hsl(160, 70%, 35%)' },
+      { label: 'Business', value: businessValue, color: 'hsl(40, 75%, 40%)' },
+      { label: 'Other', value: otherValue, color: 'hsl(160, 50%, 45%)' },
+    ].filter(s => s.value > 0); // Only show segments with value
+
+    // Calculate arcs
+    let currentAngle = -90;
+    const radius = 120;
+
+    return segments.map((segment) => {
+      const percentage = (segment.value / totalRawWealth) * 100;
+      const angle = (percentage / 100) * 360;
+      const startAngle = currentAngle;
+      const endAngle = currentAngle + angle;
+      currentAngle = endAngle;
+
+      const startRad = (startAngle * Math.PI) / 180;
+      const endRad = (endAngle * Math.PI) / 180;
+
+      const x1 = 150 + radius * Math.cos(startRad);
+      const y1 = 150 + radius * Math.sin(startRad);
+      const x2 = 150 + radius * Math.cos(endRad);
+      const y2 = 150 + radius * Math.sin(endRad);
+
+      const largeArc = angle > 180 ? 1 : 0;
+
+      // Handle the case where a single segment is 100% (Draw a full circle)
+      const path = percentage > 99.9
+        ? `M 150, 30 A 120,120 0 1,1 149.9, 30`
+        : `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`;
+
+      return {
+        ...segment,
+        percentage,
+        path,
+      };
+    });
+  }, [assets, prices, calculation]);
+
   const totalSteps = 3; // Currency, Assets, Results
-  
+
   const handleAssetChange = (key: keyof ZakatAssets, value: string) => {
     const numValue = parseFloat(value) || 0;
     setAssets(prev => ({ ...prev, [key]: numValue }));
   };
-  
+
   const handleCalculate = () => {
     const result = calculateZakat(assets, prices, selectedCurrency);
     setCalculation(result);
     setStep(2);
   };
-  
+
   const handleReset = () => {
     setAssets(getDefaultAssets());
     setCalculation(null);
     setStep(0);
   };
-  
+
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-8 md:py-12">
@@ -138,8 +197,8 @@ export default function CalculatePage() {
                 <div key={label} className="flex items-center">
                   <div className={cn(
                     "w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300",
-                    index <= step 
-                      ? "gradient-primary text-primary-foreground shadow-glow" 
+                    index <= step
+                      ? "gradient-primary text-primary-foreground shadow-glow"
                       : "bg-muted text-muted-foreground"
                   )}>
                     {index < step ? <Check className="w-5 h-5" /> : index + 1}
@@ -160,7 +219,7 @@ export default function CalculatePage() {
               ))}
             </div>
           </div>
-          
+
           <AnimatePresence mode="wait">
             {/* Step 1: Currency Selection */}
             {step === 0 && (
@@ -196,7 +255,7 @@ export default function CalculatePage() {
                         </button>
                       ))}
                     </div>
-                    
+
                     {/* Live Prices */}
                     <div className="mt-8 p-4 bg-accent/50 rounded-xl">
                       <div className="flex items-center gap-2 mb-3">
@@ -219,7 +278,7 @@ export default function CalculatePage() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="flex justify-end mt-6">
                       <Button variant="hero" size="lg" onClick={() => setStep(1)} className="gap-2">
                         Continue
@@ -230,7 +289,7 @@ export default function CalculatePage() {
                 </Card>
               </motion.div>
             )}
-            
+
             {/* Step 2: Asset Entry */}
             {step === 1 && (
               <motion.div
@@ -253,16 +312,16 @@ export default function CalculatePage() {
                           key={category.key}
                           className={cn(
                             "p-4 rounded-xl border transition-all duration-200",
-                            category.isDeduction 
-                              ? "border-destructive/30 bg-destructive/5" 
+                            category.isDeduction
+                              ? "border-destructive/30 bg-destructive/5"
                               : "border-border hover:border-primary/50"
                           )}
                         >
                           <div className="flex items-start gap-3 mb-3">
                             <div className={cn(
                               "w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0",
-                              category.isDeduction 
-                                ? "bg-destructive/20 text-destructive" 
+                              category.isDeduction
+                                ? "bg-destructive/20 text-destructive"
                                 : "bg-primary/10 text-primary"
                             )}>
                               <category.icon className="w-5 h-5" />
@@ -294,7 +353,7 @@ export default function CalculatePage() {
                         </div>
                       ))}
                     </div>
-                    
+
                     <div className="flex justify-between mt-8">
                       <Button variant="ghost" size="lg" onClick={() => setStep(0)} className="gap-2">
                         <ArrowLeft className="w-5 h-5" />
@@ -309,7 +368,7 @@ export default function CalculatePage() {
                 </Card>
               </motion.div>
             )}
-            
+
             {/* Step 3: Results */}
             {step === 2 && calculation && (
               <motion.div
@@ -322,8 +381,8 @@ export default function CalculatePage() {
                   {/* Main Result Card */}
                   <Card variant="elevated" className={cn(
                     "overflow-hidden text-center",
-                    calculation.isEligible 
-                      ? "border-primary/30 bg-gradient-to-br from-primary/5 via-background to-secondary/5" 
+                    calculation.isEligible
+                      ? "border-primary/30 bg-gradient-to-br from-primary/5 via-background to-secondary/5"
                       : "border-muted bg-muted/30"
                   )}>
                     <CardContent className="p-8 md:p-12">
@@ -337,7 +396,7 @@ export default function CalculatePage() {
                           >
                             <span className="text-4xl font-arabic text-primary-foreground">زكاة</span>
                           </motion.div>
-                          
+
                           <h2 className="text-2xl md:text-3xl font-bold mb-2">Your Zakat Due</h2>
                           <motion.p
                             initial={{ opacity: 0, y: 20 }}
@@ -364,7 +423,72 @@ export default function CalculatePage() {
                       )}
                     </CardContent>
                   </Card>
-                  
+
+                  {/* Wealth Overview Ring Chart */}
+                  {wealthSegments.length > 0 && (
+                    <Card variant="elevated">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <span className="text-2xl font-arabic text-secondary">ز</span>
+                          Wealth Overview
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="relative flex items-center justify-center">
+                          <motion.svg
+                            width="300"
+                            height="300"
+                            viewBox="0 0 300 300"
+                            className="mx-auto"
+                            initial={{ rotate: -90, opacity: 0 }}
+                            animate={{ rotate: 0, opacity: 1 }}
+                            transition={{ duration: 1 }}
+                          >
+                            {wealthSegments.map((arc, index) => (
+                              <motion.path
+                                key={arc.label}
+                                d={arc.path}
+                                fill="none"
+                                stroke={arc.color}
+                                strokeWidth="24"
+                                strokeLinecap="round"
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ duration: 1, delay: index * 0.1 }}
+                              />
+                            ))}
+                          </motion.svg>
+
+                          {/* Center Content */}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <p className="text-sm text-muted-foreground">Total Assets</p>
+                            <motion.p
+                              className="text-2xl md:text-3xl font-bold"
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ type: "spring", delay: 0.5 }}
+                            >
+                              {formatCurrency(calculation?.totalAssets || 0, selectedCurrency)}
+                            </motion.p>
+                          </div>
+                        </div>
+
+                        {/* Legend */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4">
+                          {wealthSegments.map((segment) => (
+                            <div key={segment.label} className="flex items-center gap-2 text-sm">
+                              <div
+                                className="w-3 h-3 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: segment.color }}
+                              />
+                              <span className="text-muted-foreground truncate">{segment.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
                   {/* Breakdown */}
                   <div className="grid md:grid-cols-2 gap-6">
                     {/* Nisab Status */}
@@ -396,7 +520,7 @@ export default function CalculatePage() {
                         </div>
                       </CardContent>
                     </Card>
-                    
+
                     {/* Asset Summary */}
                     <Card variant="glass">
                       <CardHeader>
@@ -418,7 +542,7 @@ export default function CalculatePage() {
                       </CardContent>
                     </Card>
                   </div>
-                  
+
                   {/* Actions */}
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Button variant="outline" size="lg" onClick={handleReset} className="gap-2">

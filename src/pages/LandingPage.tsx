@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Layout } from '@/components/layout/Layout';
-import { 
-  Calculator, 
-  TrendingUp, 
-  Shield, 
-  Globe, 
+import {
+  Calculator,
+  TrendingUp,
+  Shield,
+  Globe,
   Sparkles,
   ArrowRight,
   Coins,
@@ -38,7 +38,7 @@ export default function LandingPage() {
         {/* Decorative Elements */}
         <div className="absolute top-20 right-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
         <div className="absolute bottom-20 left-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        
+
         <div className="container mx-auto px-4 py-20 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -47,7 +47,7 @@ export default function LandingPage() {
               transition={{ duration: 0.8 }}
               className="text-center lg:text-left"
             >
-              <motion.div 
+              <motion.div
                 className="inline-flex items-center gap-2 bg-accent/50 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -56,19 +56,19 @@ export default function LandingPage() {
                 <Sparkles className="w-4 h-4 text-secondary" />
                 <span className="text-sm font-medium text-foreground">Smart Islamic Finance</span>
               </motion.div>
-              
+
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
                 Calculate Your{' '}
                 <span className="text-gradient-primary">Zakat</span>
                 <br />
                 with Clarity & Trust
               </h1>
-              
+
               <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0">
-                A modern platform to help Muslims fulfill their religious duty with accurate calculations, 
+                A modern platform to help Muslims fulfill their religious duty with accurate calculations,
                 live market data, and AI-powered guidance.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link to="/calculate">
                   <Button variant="hero" size="xl" className="w-full sm:w-auto gap-2">
@@ -82,9 +82,9 @@ export default function LandingPage() {
                   </Button>
                 </Link>
               </div>
-              
+
               {/* Trust Badges */}
-              <motion.div 
+              <motion.div
                 className="flex items-center gap-6 mt-10 justify-center lg:justify-start"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -100,7 +100,7 @@ export default function LandingPage() {
                 </div>
               </motion.div>
             </motion.div>
-            
+
             {/* Hero Visual */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -112,15 +112,15 @@ export default function LandingPage() {
                 {/* Animated Ring */}
                 <div className="absolute inset-0 wealth-ring rounded-full opacity-20" />
                 <div className="absolute inset-4 bg-background rounded-full shadow-deep" />
-                
+
                 {/* Center Content */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <span className="text-6xl font-arabic text-secondary mb-2">زكاة</span>
                   <span className="text-lg font-medium text-muted-foreground">Purification of Wealth</span>
                 </div>
-                
+
                 {/* Floating Cards */}
-                <motion.div 
+                <motion.div
                   className="absolute -top-4 -right-4 bg-card p-4 rounded-2xl shadow-elegant border border-border/50"
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 4, repeat: Infinity }}
@@ -135,8 +135,8 @@ export default function LandingPage() {
                     </div>
                   </div>
                 </motion.div>
-                
-                <motion.div 
+
+                <motion.div
                   className="absolute -bottom-4 -left-4 bg-card p-4 rounded-2xl shadow-elegant border border-border/50"
                   animate={{ y: [0, 10, 0] }}
                   transition={{ duration: 4, repeat: Infinity, delay: 1 }}
@@ -156,11 +156,11 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      
+
       {/* Features Section */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             {...fadeInUp}
           >
@@ -172,8 +172,8 @@ export default function LandingPage() {
               Our comprehensive platform covers all aspects of zakat calculation with modern tools and trusted methodologies.
             </p>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
             variants={staggerContainer}
             initial="initial"
@@ -185,48 +185,54 @@ export default function LandingPage() {
                 icon: Calculator,
                 title: 'Smart Calculator',
                 description: 'Calculate zakat on cash, gold, silver, investments, business assets, and more.',
-                color: 'bg-primary/10 text-primary'
+                color: 'bg-primary/10 text-primary',
+                link: '/calculate'
               },
               {
                 icon: TrendingUp,
                 title: 'Live Market Data',
                 description: 'Real-time gold and silver prices with historical charts and trends.',
-                color: 'bg-secondary/20 text-secondary-dark'
+                color: 'bg-secondary/20 text-secondary-dark',
+                link: '/dashboard'
               },
               {
                 icon: Globe,
                 title: 'Global Currencies',
                 description: 'Support for USD, EUR, BDT, INR, PKR, SAR, and many more currencies.',
-                color: 'bg-accent text-primary'
+                color: 'bg-accent text-primary',
+                link: '/calculate'
               },
               {
                 icon: Shield,
                 title: 'Shariah Compliant',
                 description: 'Calculations based on authentic Islamic rulings and nisab thresholds.',
-                color: 'bg-primary/10 text-primary'
+                color: 'bg-primary/10 text-primary',
+                link: '/assistant'
               }
             ].map((feature, index) => (
               <motion.div
                 key={index}
                 variants={fadeInUp}
               >
-                <Card variant="elevated" className="p-6 h-full hover:shadow-glow transition-all duration-300 group">
-                  <div className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <feature.icon className="w-7 h-7" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm">{feature.description}</p>
-                </Card>
+                <Link to={feature.link} className="block h-full">
+                  <Card variant="elevated" className="p-6 h-full hover:shadow-glow transition-all duration-300 group cursor-pointer">
+                    <div className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                      <feature.icon className="w-7 h-7" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
+                    <p className="text-muted-foreground text-sm">{feature.description}</p>
+                  </Card>
+                </Link>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
-      
+
       {/* How It Works */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             {...fadeInUp}
           >
@@ -237,7 +243,7 @@ export default function LandingPage() {
               Three simple steps to calculate your zakat obligation.
             </p>
           </motion.div>
-          
+
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {[
               {
@@ -267,26 +273,28 @@ export default function LandingPage() {
                 transition={{ delay: index * 0.2 }}
                 className="text-center"
               >
-                <div className="relative inline-block mb-6">
-                  <div className="w-20 h-20 rounded-3xl gradient-primary flex items-center justify-center shadow-glow">
-                    <item.icon className="w-10 h-10 text-primary-foreground" />
+                <Link to="/calculate" className="block group cursor-pointer">
+                  <div className="relative inline-block mb-6 transition-transform duration-300 group-hover:scale-110">
+                    <div className="w-20 h-20 rounded-3xl gradient-primary flex items-center justify-center shadow-glow">
+                      <item.icon className="w-10 h-10 text-primary-foreground" />
+                    </div>
+                    <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-secondary text-foreground text-sm font-bold flex items-center justify-center shadow-gold">
+                      {item.step}
+                    </span>
                   </div>
-                  <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-secondary text-foreground text-sm font-bold flex items-center justify-center shadow-gold">
-                    {item.step}
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                <p className="text-muted-foreground">{item.description}</p>
+                  <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{item.title}</h3>
+                  <p className="text-muted-foreground">{item.description}</p>
+                </Link>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
-      
+
       {/* AI Assistant Preview */}
       <section className="py-20 bg-primary text-primary-foreground overflow-hidden relative">
         <div className="absolute inset-0 pattern-islamic opacity-10" />
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -298,15 +306,15 @@ export default function LandingPage() {
                 <Sparkles className="w-4 h-4 text-secondary" />
                 <span className="text-sm font-medium">AI-Powered</span>
               </div>
-              
+
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
                 Ask the Zakat Assistant
               </h2>
               <p className="text-primary-foreground/80 text-lg mb-8">
-                Have questions about zakat rulings? Our AI assistant is trained on Islamic finance principles 
+                Have questions about zakat rulings? Our AI assistant is trained on Islamic finance principles
                 to help you understand complex scenarios.
               </p>
-              
+
               <Link to="/assistant">
                 <Button variant="gold" size="lg" className="gap-2">
                   <MessageCircle className="w-5 h-5" />
@@ -314,7 +322,7 @@ export default function LandingPage() {
                 </Button>
               </Link>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -330,14 +338,14 @@ export default function LandingPage() {
                       <p className="text-sm">Is zakat due on my retirement savings?</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-3">
                     <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center flex-shrink-0">
                       <span className="text-xs font-bold">AI</span>
                     </div>
                     <div className="bg-primary-foreground/10 rounded-2xl rounded-tl-sm p-4">
                       <p className="text-sm">
-                        Retirement savings are generally zakatable if you have access to them. 
+                        Retirement savings are generally zakatable if you have access to them.
                         The key factors are accessibility and ownership...
                       </p>
                     </div>
@@ -348,7 +356,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      
+
       {/* CTA Section */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4 text-center">
@@ -361,7 +369,7 @@ export default function LandingPage() {
               Ready to Calculate Your Zakat?
             </h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join thousands of Muslims using ZAKAT to fulfill their religious obligations with confidence.
+              Join thousands of Muslims using Zakatify to fulfill their religious obligations with confidence.
             </p>
             <Link to="/calculate">
               <Button variant="hero" size="xl" className="gap-2">

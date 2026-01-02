@@ -280,3 +280,34 @@
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--primary) / 0.5);
 }
+
+/* Print styles */
+@media print {
+  /* Fix gradient text being invisible in print */
+  .text-gradient-primary {
+    -webkit-text-fill-color: unset;
+    color: hsl(var(--primary));
+    background: none;
+  }
+  
+  .text-gradient-gold {
+    -webkit-text-fill-color: unset;
+    color: hsl(var(--secondary));
+    background: none;
+  }
+  
+  /* Remove animations and effects */
+  .animate-pulse-glow,
+  .shadow-glow,
+  .animate-float {
+    animation: none;
+    box-shadow: none;
+  }
+  
+  /* Ensure visibility */
+  motion-div,
+  [class*="motion"] {
+    opacity: 1 !important;
+  }
+}
+
